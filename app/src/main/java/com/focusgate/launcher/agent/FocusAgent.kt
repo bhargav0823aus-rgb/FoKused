@@ -57,6 +57,27 @@ class FocusAgent(private val context: Context) {
             ?.firstOrNull { it.isFile && (it.extension == "task" || it.extension == "litertlm") }
 
     /**
+     * Unpack the model bundled inside the APK (assets/gemma.task) to internal
+     * storage once. MediaPipe needs a real file path (it mmaps the file and can't
+     * read straight from the APK zip), so the first launch copies it out. Returns
+     * null only if this build has no bundled model.
+     */
+    private fun ensureBundledModel(): File? {
+        val dest = File(context.filesDir, "gemma.task")
+        if (dest.exists() && dest.length() > 100_000_000L) return dest // already unpacked
+        return try {
+            context.assets.open(BUNDLED_MODEL).use { input ->
+                dest.outputStream().use { output -> input.copyTo(output, 1 shl 20) }
+            }
+            dest
+        } catch (e: Exception) {
+            Log.w(TAG, "no bundled model in this build", e)
+            runCatching { dest.delete() }
+            null
+        }
+    }
+
+    /**
      * Load the model. Emits states through [onState]; returns when Ready or
      * Unavailable is known. Loading a ~500 MB model takes a few seconds, so this
      * runs entirely off the main thread.
@@ -64,11 +85,13 @@ class FocusAgent(private val context: Context) {
     suspend fun initialize(onState: (AgentState) -> Unit) {
         onState(AgentState.Checking)
 
-        val modelFile = findModelFile()
+        // Prefer a side-loaded model (lets power users swap it) else unpack the one
+        // bundled in the APK. Both the copy and the load are heavy, so run off-main.
+        val modelFile = withContext(llmDispatcher) { findModelFile() ?: ensureBundledModel() }
         if (modelFile == null) {
             onState(
                 AgentState.Unavailable(
-                    "no model found. Push a Gemma .task file to this folder, then reopen:\n" +
+                    "no model in this build. Side-load a Gemma .task into:\n" +
                         modelDir.absolutePath
                 )
             )
@@ -240,5 +263,6 @@ class FocusAgent(private val context: Context) {
 
     private companion object {
         const val TAG = "FocusAgent"
+        const val BUNDLED_MODEL = "gemma.task" // in app/src/main/assets, unpacked on first run
     }
 }

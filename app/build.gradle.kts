@@ -43,6 +43,11 @@ android {
     buildFeatures {
         compose = true
     }
+    androidResources {
+        // The bundled Gemma model is already 4-bit quantized; don't let aapt try to
+        // recompress ~550 MB. Stored uncompressed so it copies out fast on first run.
+        noCompress += "task"
+    }
 }
 
 dependencies {
