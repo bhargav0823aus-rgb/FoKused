@@ -1,0 +1,19 @@
+*.iml
+.gradle/
+local.properties
+.idea/
+.DS_Store
+build/
+captures/
+.externalNativeBuild
+.cxx
+
+# Gemma model weights (554 MB, distributed via GitHub Release, not committed).
+# Download from Hugging Face and side-load per the README.
+*.task
+*.litertlm
+
+# Signing material
+*.keystore
+*.jks
+keystore.properties

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- A launcher must enumerate every launchable app; Android 11 package
+         visibility filtering would otherwise hide most of them. Note: this
+         permission needs a declaration form if the app ever ships on Play. -->
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- targetSdk 34+ requires a typed foreground service; the countdown timer
+         fits none of the enumerated types, so it declares "specialUse". -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <application
+        android:name=".FoKusedApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FocusGate">
+
+        <!-- The launcher activity.
+             - HOME + DEFAULT makes it eligible as the device home screen.
+             - LAUNCHER keeps it reachable from other launchers before it's default.
+             - singleTask: pressing Home always returns to the one existing chat,
+               never stacks a new instance.
+             - stateNotNeeded: the system may kill/recreate a home app freely
+               without onSaveInstanceState; chat state is deliberately ephemeral. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:stateNotNeeded="true"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".timer.FocusTimerService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <!-- Required companion property for specialUse: a human-readable
+                 justification the Play reviewers (and the system) can inspect. -->
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Countdown timer for an app session approved by the FocusGate launcher" />
+        </service>
+
+        <!-- Optional hard-enforcement service. The user must enable it in
+             Settings → Accessibility; enforcement degrades to gate-only if not.
+             BIND_ACCESSIBILITY_SERVICE ensures only the system can bind it. -->
+        <service
+            android:name=".service.FocusAccessibilityService"
+            android:exported="false"
+            android:label="@string/accessibility_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+    </application>
+</manifest>

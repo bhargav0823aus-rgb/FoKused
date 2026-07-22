@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive-icon foreground: inset the mascot so its wing tips stay inside the
+     safe zone and aren't clipped by circular/rounded launcher masks. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/mascot_icon"
+    android:inset="14%" />

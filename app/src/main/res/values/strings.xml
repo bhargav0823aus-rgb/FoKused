@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FoKused</string>
+    <string name="accessibility_label">FoKused strict blocking</string>
+    <string name="accessibility_desc">Lets FoKused send you back to the gate when you open an app that your daily schedule blocks right now. FoKused reads only which app is in the foreground — never your screen content — and works entirely on-device.</string>
+</resources>

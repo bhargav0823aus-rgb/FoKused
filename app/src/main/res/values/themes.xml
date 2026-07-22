@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window-level theme only; all real styling is Compose Material 3.
+         True-black window avoids a flash on cold start — important for a home app. -->
+    <style name="Theme.FocusGate" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/gate_background</item>
+        <item name="android:statusBarColor">@color/gate_background</item>
+        <item name="android:navigationBarColor">@color/gate_background</item>
+    </style>
+</resources>

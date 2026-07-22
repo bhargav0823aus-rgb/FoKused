@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- True-black brand background (matches the mascot's black outline). -->
+    <color name="gate_background">#0A0A0A</color>
+    <!-- Launcher-icon background: black makes the colourful dragon pop. -->
+    <color name="ic_launcher_background">#0A0A0A</color>
+</resources>
