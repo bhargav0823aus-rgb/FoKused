@@ -12,16 +12,20 @@ Target device: Samsung Galaxy S25 Ultra (Android 15/16, One UI 7). minSdk 26.
 
 ## Download
 
-Grab the prebuilt app and model from the
-[**v1.0 release**](https://github.com/bhargav0823aus-rgb/FoKused/releases/tag/v1.0):
+From the [**v1.0 release**](https://github.com/bhargav0823aus-rgb/FoKused/releases/tag/v1.0):
 
-- `FoKused-v1.0.apk` - the app. Sideload it (allow "Install unknown apps").
-- `gemma3-1b-it-int4.task` - the on-device AI model (Gemma 3 1B, ~554 MB). After
-  installing the app, push it to the phone:
-  ```
-  adb push gemma3-1b-it-int4.task /sdcard/Android/data/com.focusgate.launcher/files/
-  ```
-  Then reopen FoKused; the header flips to "on-device AI ready".
+- `FoKused-v1.0.apk` (~590 MB) - **the complete app with the AI model bundled in.**
+  Just sideload it and open (allow "Install unknown apps"). On first launch it
+  unpacks the model to internal storage, then Dragon Fo is ready. No separate
+  download or `adb push` needed.
+
+Prefer a smaller install? The model is also attached separately as
+`gemma3-1b-it-int4.task` - build the app from source (a slim APK), then side-load
+the model:
+```
+adb push gemma3-1b-it-int4.task /sdcard/Android/data/com.focusgate.launcher/files/
+```
+The app uses a side-loaded model if present, otherwise the bundled one.
 
 ## How it works
 
